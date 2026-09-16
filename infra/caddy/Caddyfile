@@ -1,0 +1,26 @@
+# Corkbit detras de TLS. Solo se usa con el perfil `public` (`just up-public`).
+# Caddy pide y renueva los certificados de Let's Encrypt solo; no hay cron ni certbot.
+{
+	email {$ACME_EMAIL}
+}
+
+# El tablero, la API, el servidor MCP y los metadatos RFC 9728 que el agente de IA
+# lee del 401. Todo eso ya lo resuelve el nginx de la imagen `web`.
+{$CORKBIT_DOMAIN} {
+	reverse_proxy web:80
+
+	# El MCP es una conexion larga: no la cortes a los 30 s por defecto.
+	@mcp path /api/mcp/*
+	reverse_proxy @mcp web:80 {
+		flush_interval -1
+		transport http {
+			read_timeout 1h
+		}
+	}
+}
+
+# Keycloak en su propio subdominio: es lo que espera KC_HOSTNAME y evita pelearse
+# con los prefijos de ruta. Caddy manda X-Forwarded-*, que es lo que lee KC_PROXY_HEADERS.
+{$KEYCLOAK_DOMAIN} {
+	reverse_proxy keycloak:8080
+}

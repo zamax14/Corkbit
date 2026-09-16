@@ -34,7 +34,7 @@ services:
       KC_HEALTH_ENABLED: "true"
       CORKBIT_WEB_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
     ports:
-      - "${KEYCLOAK_PORT:-8081}:8080"
+      - "${KEYCLOAK_BIND:-0.0.0.0}:${KEYCLOAK_PORT:-8081}:8080"
     volumes:
       - ../infra/keycloak:/opt/keycloak/data/import:ro
     depends_on:
@@ -73,10 +73,31 @@ services:
   web:
     build: ../apps/web
     ports:
-      - "${WEB_PORT:-8080}:80"
+      - "${WEB_BIND:-0.0.0.0}:${WEB_PORT:-8080}:80"
     depends_on:
       api:
         condition: service_healthy
+    restart: unless-stopped
+  caddy:
+    profiles: ["public"]
+    image: caddy:2-alpine
+    environment:
+      CORKBIT_DOMAIN: ${CORKBIT_DOMAIN:-}
+      KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN:-}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ../infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      # Los certificados viven aqui: sin este volumen se vuelven a pedir en cada
+      # reinicio y Let's Encrypt acaba aplicando limites de emision.
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - keycloak
     restart: unless-stopped
   print-agent:
     profiles: ["printer"]
@@ -106,3 +127,5 @@ services:
 volumes:
   postgres_data:
   agent_data:
+  caddy_data:
+  caddy_config:
