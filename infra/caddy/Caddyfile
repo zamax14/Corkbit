@@ -4,18 +4,24 @@
 	email {$ACME_EMAIL}
 }
 
-# El tablero, la API, el servidor MCP y los metadatos RFC 9728 que el agente de IA
-# lee del 401. Todo eso ya lo resuelve el nginx de la imagen `web`.
 {$CORKBIT_DOMAIN} {
-	reverse_proxy web:80
-
-	# El MCP es una conexion larga: no la cortes a los 30 s por defecto.
-	@mcp path /api/mcp/*
-	reverse_proxy @mcp web:80 {
-		flush_interval -1
-		transport http {
-			read_timeout 1h
+	# El servidor MCP en la raiz del dominio. La ruta publica tiene que coincidir con
+	# MCP_BASE_URL: FastMCP deriva de ahi el path de los metadatos RFC 9728 que el
+	# agente lee del 401, y una ruta distinta devuelve 404 en pleno flujo OAuth.
+	handle /mcp* {
+		rewrite * /api{uri}
+		reverse_proxy web:80 {
+			# El MCP es una conexion larga: no la cortes a los 30 s por defecto.
+			flush_interval -1
+			transport http {
+				read_timeout 1h
+			}
 		}
+	}
+
+	# El tablero, la API y /.well-known, que el nginx de la imagen `web` ya resuelve.
+	handle {
+		reverse_proxy web:80
 	}
 }
 
