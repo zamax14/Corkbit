@@ -1,0 +1,108 @@
+name: crokbit
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: crokbit
+      POSTGRES_USER: crokbit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crokbit-local}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../infra/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crokbit -d crokbit"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7
+    # La consola de administracion vive en KC_HOSTNAME_ADMIN, que en la Pi solo se publica
+    # dentro de la tailnet. El Funnel publico expone unicamente /mcp de la API.
+    command: start --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Define KEYCLOAK_ADMIN_PASSWORD in .env}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: crokbit
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-crokbit-local}
+      KC_HOSTNAME: ${KEYCLOAK_URL:-http://localhost:8081}
+      KC_HOSTNAME_ADMIN: ${KEYCLOAK_ADMIN_URL:-http://localhost:8081}
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: "true"
+      CROKBIT_WEB_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
+    ports:
+      - "${KEYCLOAK_PORT:-8081}:8080"
+    volumes:
+      - ../infra/keycloak:/opt/keycloak/data/import:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3 | grep -q '\"status\": \"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+    restart: unless-stopped
+  api:
+    build: ../apps/api
+    environment:
+      DATABASE_URL: postgresql+psycopg://crokbit:${POSTGRES_PASSWORD:-crokbit-local}@db:5432/crokbit
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
+      AGENT_TOKEN: ${AGENT_TOKEN:?Define AGENT_TOKEN in .env}
+      OIDC_ISSUER: ${OIDC_ISSUER:-}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:-crokbit-api}
+      MCP_BASE_URL: ${MCP_BASE_URL:-}
+      WIP_LIMIT: ${WIP_LIMIT:-5}
+      ROOT_PATH: /api
+      PRINT_MAX_ATTEMPTS: ${PRINT_MAX_ATTEMPTS:-3}
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  web:
+    build: ../apps/web
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+  print-agent:
+    profiles: ["printer"]
+    build: ../apps/print-agent
+    environment:
+      PRINT_API_URL: http://api:8000
+      PRINT_AGENT_TOKEN: ${AGENT_TOKEN:?Define AGENT_TOKEN in .env}
+      PRINT_AGENT_ID: office-agent
+      PRINT_PRINTER_ID: 1
+      PRINT_TRANSPORT: ${PRINT_TRANSPORT:-file}
+      PRINT_HOST: ${PRINT_HOST:-}
+      PRINT_PORT: ${PRINT_PORT:-9100}
+      PRINT_PROFILE: ${PRINT_PROFILE:-TM-T88III}
+      PRINT_DEVICE: /dev/pos
+      PRINT_OUTPUT_DIR: /data/tickets
+      PRINT_STATE_DIR: /data/state
+    volumes:
+      - agent_data:/data
+    # PRINT_DEVICE en .env apunta a la impresora USB del host (p. ej. /dev/usb/lp3).
+    # Sin impresora queda en /dev/null y el servicio arranca igual.
+    devices:
+      - ${PRINT_DEVICE:-/dev/null}:/dev/pos
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  agent_data:

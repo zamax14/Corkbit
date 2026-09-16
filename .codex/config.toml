@@ -1,0 +1,2 @@
+[mcp_servers.crokbit]
+url = "http://localhost:8080/api/mcp/"

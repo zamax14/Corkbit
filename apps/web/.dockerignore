@@ -1,0 +1,13 @@
+.venv
+node_modules
+dist
+.env
+*.db
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+test-results
+playwright-report
+tickets
+agent-state
