@@ -29,7 +29,12 @@ def main() -> None:
         else:
             if db.scalar(select(User.id).limit(1)):
                 raise SystemExit("Los datos demo requieren una base sin usuarios.")
-            users = [User(name=name) for name in ["Alex", "Paulino", "Mariana"]]
+            # Un `subject` sintetico: `users_list` solo devuelve identidades espejo de Keycloak,
+            # y sin el los miembros de ejemplo existirian en la base pero no saldrian en la web.
+            users = [
+                User(subject=f"demo:{name.lower()}", name=name)
+                for name in ["Alex", "Paulino", "Mariana"]
+            ]
             db.add_all(users)
             db.flush()
             samples = [
