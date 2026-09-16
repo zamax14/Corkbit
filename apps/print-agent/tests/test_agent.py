@@ -8,7 +8,7 @@ import pytest
 from corkbit_agent.config import Config
 from corkbit_agent.main import Agent
 from corkbit_agent.printer import print_job
-from corkbit_agent.renderer import clean, render
+from corkbit_agent.renderer import clean, render, ticket_lines
 
 
 @pytest.fixture()
@@ -42,11 +42,10 @@ def test_ticket_contains_required_fields_and_qr(job: dict):
     text = "".join(call.args[0] for call in printer.text.call_args_list)
     for expected in [
         "TASK-0142",
-        "HIGH",
-        "INTEGRACIÓN CON EL MCP",
+        "Alta",
+        "Integración con el MCP",
         "Álex",
         "2026-09-11",
-        "BACKLOG",
     ]:
         assert expected in text
     printer.qr.assert_called_once_with(job["ticket"]["url"], size=4, native=False)
@@ -112,3 +111,14 @@ def test_late_ack_archived_without_reprint(config: Config, job: dict):
     agent.tick()
     output.assert_not_called()
     assert (config.state_dir / "unacknowledged-10.json").exists()
+
+
+@pytest.mark.parametrize("columns", [32, 48])
+def test_ticket_wraps_without_empty_metadata(job: dict, columns: int):
+    ticket = {**job["ticket"], "title": "Revisar " * 25, "assignee": None, "deadline": None}
+    header, title, meta = ticket_lines(ticket, columns)
+    assert "BACKLOG" not in header
+    assert len(header) <= columns
+    assert max(map(len, title.splitlines())) <= columns // 2
+    assert title.replace("\n", " ") == ticket["title"].strip()
+    assert meta == ""
