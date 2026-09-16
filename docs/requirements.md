@@ -1,6 +1,6 @@
 # Cobertura del MVP
 
-Fuente original: [pinboard_pm_requirements.md](../pinboard_pm_requirements.md). El producto usa el nombre Corkbit; el documento original se conserva como referencia histórica.
+Qué pedía el MVP original y dónde está implementado cada punto.
 
 | Requisito | Implementación |
 |---|---|
@@ -19,11 +19,12 @@ Fuente original: [pinboard_pm_requirements.md](../pinboard_pm_requirements.md). 
 | Tableros por proyecto | Pestañas de navegador, galería de miniaturas y borrado confirmado |
 | Color de post-it por miembro | `users.color`, selector en «Miembros» y notas teñidas |
 | WIP limit | Conteo configurable con aviso, sin bloqueo |
+| Comentarios por tarea | `tasks.comments`, timeline en la vista individual y herramientas MCP |
 | Heartbeat/retry/errores | Reserva atómica, acuse persistente y reintentos limitados |
 | SQLite/PostgreSQL | Local / Compose, mismo esquema Alembic |
 | OpenAPI y errores | `/docs`, validación y respuestas HTTP consistentes |
 | Docker Compose | DB, API, Nginx/web y agente opcional |
 
-Los endpoints mínimos del documento están implementados. Se añaden `GET /health`, `GET /settings`, `GET/POST /users`, `GET /boards/{id}/overview` y `POST /printers/{id}/claim` para la operación real del MVP.
+Los endpoints mínimos están implementados. Se añaden `GET /health`, `GET /auth-config`, `GET /settings`, `GET /users`, `GET /boards/{id}/overview` y `POST /printers/{id}/claim` para la operación real.
 
-Las fases 3–5 (comentarios, historial, filtros, búsqueda y notificaciones) son evolución futura, no parte de esta entrega; de la línea de IA solo se implementa el servidor MCP montado en `/mcp`, que reexpone la API existente como herramientas. La impresión física necesita validar el perfil con el equipo real; las pruebas automatizadas cubren la generación efectiva de ESC/POS y el QR, así como el protocolo de cola.
+De las fases posteriores se implementan los comentarios y el servidor MCP montado en `/mcp`, que reexpone la API existente como herramientas. Filtros, búsqueda y notificaciones siguen sin implementar. La impresión física necesita validar el perfil con el equipo real; las pruebas automatizadas cubren la generación efectiva de ESC/POS y el QR, así como el protocolo de cola.

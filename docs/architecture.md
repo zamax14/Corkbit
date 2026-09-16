@@ -24,7 +24,7 @@ FastAPI → servicios → repositorios / SQLAlchemy
 - `apps/web`: React, TypeScript, Vite, Tailwind CSS; componentes de tablero, formularios y detalles. El estado viene de la API; no se guardan tareas ficticias en localStorage. El estilo de corcho se genera en CSS con textura SVG local. La paleta carbón/salvia/corcho/papel/cielo y la fuente Inter local toman como referencia `guia_visual.png`; se usa la marca Corkbit.
 - `apps/api`: FastAPI / Pydantic; `api` expone rutas, `mcp` deriva el servidor MCP del propio OpenAPI de la app (sin lógica paralela), `services` aplica transacciones y reglas, `repositories` encapsula consultas compartidas, `models` define persistencia, `schemas` valida entradas y salidas, `db` administra sesiones.
 - `apps/print-agent`: configuración, cliente HTTP, renderizador, conexión ESC/POS y bucle con recuperación persistente.
-- `infra/compose.yaml`: PostgreSQL, API, web y agente opcional. Nginx preserva las rutas `/t/{id}` al recargar.
+- `infra/compose.yaml`: PostgreSQL, Keycloak, API y web; el agente de impresión (perfil `printer`) y Caddy (perfil `public`) son opcionales. Nginx preserva las rutas `/t/{id}` al recargar y publica los metadatos RFC 9728 en la raíz del host. Caddy termina TLS con certificados de Let's Encrypt automáticos.
 
 ## Decisiones
 
@@ -35,7 +35,7 @@ FastAPI → servicios → repositorios / SQLAlchemy
 5. La web refresca el estado cada 10 segundos cuando está visible. Las respuestas de refrescos anteriores a una mutación no sobrescriben el cambio. Los errores son visibles y conservan el borrador del formulario.
 6. El arrastre tiene sensores de puntero y teclado con anuncios en español. Los botones de estado ofrecen una alternativa móvil. Los diálogos nativos mantienen foco y permiten Escape.
 7. La cola usa compare-and-set en SQL para reservas exclusivas, sin Redis ni intermediario adicional. Las llamadas del agente requieren `X-Agent-Token` y una identidad asociada a la impresora.
-8. El servidor MCP se genera desde el OpenAPI con `FastMCP.from_fastapi` y se monta en la misma app: las herramientas llaman a las rutas por ASGI, sin red ni reglas duplicadas. Se excluyen `/health`, `/settings` y las rutas del agente de impresión. `MCP_TOKEN`, si está definido, exige un bearer compartido; vacío deja el endpoint como el resto de la API.
+8. El servidor MCP se genera desde el OpenAPI con `FastMCP.from_fastapi` y se monta en la misma app: las herramientas llaman a las rutas por ASGI, sin red ni reglas duplicadas. Se excluyen `/health`, `/settings` y las rutas del agente de impresión. La autenticación la pone `KeycloakAuthProvider` con registro dinámico de clientes: un agente externo se registra solo, sin Auth URL ni Token URL escritas a mano. Se activa con `OIDC_ISSUER` y `MCP_BASE_URL`, y el *path* de esta última determina dónde se sirven los metadatos RFC 9728.
 9. Imprimir es una acción de la interfaz. «Imprimir aquí» usa el diálogo del navegador y la impresora del equipo que mira el tablero: el ticket se maqueta con CSS `@page` a 80 mm y sale fuera del árbol de la app (portal a `body`), sin tocar el servidor. La cola ESC/POS sigue disponible para el caso compartido. Ambas rutas sellan `tasks.printed_at`; el sello es informativo y no bloquea reimpresiones, porque ninguna de las dos confirma la salida física.
 10. La navegación entre tableros son pestañas de navegador (`aria-current="page"`), y «Todos los tableros» es una galería de miniaturas del propio corcho, con las notas reales de cada uno. Eliminar un tablero vive solo en esa vista, tras una confirmación que nombra el tablero y sus tareas; la API además exige `confirm: true`.
 11. El color de post-it es del miembro, no de la tarea: se guarda en `users.color` y sus notas lo usan en todos los tableros. La prioridad conserva su etiqueta, así que el color nunca la oculta.
@@ -43,7 +43,7 @@ FastAPI → servicios → repositorios / SQLAlchemy
 
 ## Operación
 
-El tablero no incluye autenticación de usuarios. Usa red privada o un proxy de acceso autenticado. Los secretos se mantienen en archivos `.env` ignorados por Git. Los datos de Docker y el estado del agente usan volúmenes; no elimines volúmenes si deseas conservarlos.
+El tablero y la API exigen sesión de Keycloak: toda ruta responde 401 sin un token válido, salvo `/health`, `/auth-config` y las del agente de impresión, que usan `AGENT_TOKEN`. No hay interruptor para desactivar la autenticación, y las cuentas las crea el administrador desde la consola de Keycloak: no hay autorregistro. Los permisos son planos: quien inicia sesión puede todo. Ver [el diseño de autenticación](diseno-autenticacion.md). Los secretos se mantienen en archivos `.env` ignorados por Git. Los datos de Docker y el estado del agente usan volúmenes; no elimines volúmenes si deseas conservarlos.
 
 Para respaldar PostgreSQL:
 
