@@ -88,14 +88,22 @@ test('arrastre con teclado y aviso WIP sin bloquear', async ({ page, request }) 
 });
 
 test('arrastre con puntero entre columnas', async ({ page, request }) => {
+  // El corcho arranca por debajo de los 720 px del viewport por defecto, y el asa vive en
+  // opacity 0 hasta que el puntero entra en la nota: hay que darle alto y pasar por encima
+  // antes de agarrarla. Se agarra por su esquina, que es donde el asa tiene superficie real,
+  // y el primer desplazamiento va en pasos para superar el umbral de 8 px de dnd-kit.
+  await page.setViewportSize({ width: 1440, height: 1200 });
   await request.post('/api/tasks', { data: { title: 'Mover con ratón' } });
   await page.goto('/?board=1');
-  const handle = await page.getByRole('button', { name: 'Mover Mover con ratón' }).boundingBox();
+  const grip = page.getByRole('button', { name: 'Mover Mover con ratón', exact: true });
+  await grip.hover({ position: { x: 40, y: 40 } });
+  await page.waitForTimeout(250);
+  const handle = await grip.boundingBox();
   const column = await page.getByRole('region', { name: 'Terminado' }).boundingBox();
   if (!handle || !column) throw new Error('No se encontró el destino');
-  await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+  await page.mouse.move(handle.x + handle.width - 8, handle.y + handle.height - 8);
   await page.mouse.down();
-  await page.mouse.move(handle.x + 12, handle.y + 12);
+  await page.mouse.move(handle.x + handle.width + 12, handle.y + handle.height, { steps: 3 });
   await page.mouse.move(column.x + column.width / 2, column.y + 120, { steps: 15 });
   await page.mouse.up();
   await expect(
