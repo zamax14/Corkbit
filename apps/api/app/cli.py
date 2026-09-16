@@ -39,7 +39,7 @@ def main() -> None:
             db.flush()
             samples = [
                 (
-                    "Preparar la integración MCP SIEEJ",
+                    "Preparar la integración con el MCP",
                     "Dejar todo listo para las primeras pruebas.",
                     0,
                     "HIGH",

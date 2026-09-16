@@ -26,7 +26,7 @@ def job() -> dict:
         "attempts": 1,
         "ticket": {
             "id": 142,
-            "title": "Integración MCP SIEEJ",
+            "title": "Integración con el MCP",
             "priority": "HIGH",
             "assignee": {"name": "Álex"},
             "deadline": "2026-09-11",
@@ -40,7 +40,14 @@ def test_ticket_contains_required_fields_and_qr(job: dict):
     printer = Mock()
     render(printer, job["ticket"])
     text = "".join(call.args[0] for call in printer.text.call_args_list)
-    for expected in ["TASK-0142", "HIGH", "INTEGRACIÓN MCP SIEEJ", "Álex", "2026-09-11", "BACKLOG"]:
+    for expected in [
+        "TASK-0142",
+        "HIGH",
+        "INTEGRACIÓN CON EL MCP",
+        "Álex",
+        "2026-09-11",
+        "BACKLOG",
+    ]:
         assert expected in text
     printer.qr.assert_called_once_with(job["ticket"]["url"], size=4, native=False)
     printer.cut.assert_called_once()

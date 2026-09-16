@@ -167,7 +167,7 @@ test('tablero de demostración', async ({ page, request }) => {
   const user = await (await request.post('/api/users', { data: { name: 'Alex' } })).json();
   for (const data of [
     {
-      title: 'Preparar la integración MCP SIEEJ',
+      title: 'Preparar la integración con el MCP',
       description: 'Dejar todo listo para las primeras pruebas.',
       priority: 'HIGH',
       status: 'BACKLOG',
@@ -203,7 +203,7 @@ test('tablero de demostración', async ({ page, request }) => {
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto('/?board=1');
   await expect(
-    page.getByRole('heading', { name: 'Preparar la integración MCP SIEEJ' }),
+    page.getByRole('heading', { name: 'Preparar la integración con el MCP' }),
   ).toBeVisible();
   await page.screenshot({ path: 'test-results/board.png', fullPage: true });
 });
