@@ -1,17 +1,39 @@
 import { useState, type FormEvent } from 'react';
 import { postItColors, type PostItColor, type User } from '../api/client';
 
-function ColorSelect({ value, onChange, label, disabled }: {
-  value: PostItColor | null; onChange: (color: PostItColor | null) => void; label: string; disabled: boolean;
+function ColorSelect({
+  value,
+  onChange,
+  label,
+  disabled,
+}: {
+  value: PostItColor | null;
+  onChange: (color: PostItColor | null) => void;
+  label: string;
+  disabled: boolean;
 }) {
-  return <label className="color-picker">
-    <span className="color-sample" aria-hidden="true" style={{ backgroundColor: value ? postItColors[value].value : '#f8f7f4' }} />
-    <span className="sr-only">{label}</span>
-    <select value={value || ''} disabled={disabled} onChange={(event) => onChange((event.target.value || null) as PostItColor | null)}>
-      <option value="">Por prioridad</option>
-      {Object.entries(postItColors).map(([key, color]) => <option value={key} key={key}>{color.label}</option>)}
-    </select>
-  </label>;
+  return (
+    <label className="color-picker">
+      <span
+        className="color-sample"
+        aria-hidden="true"
+        style={{ backgroundColor: value ? postItColors[value].value : '#f8f7f4' }}
+      />
+      <span className="sr-only">{label}</span>
+      <select
+        value={value || ''}
+        disabled={disabled}
+        onChange={(event) => onChange((event.target.value || null) as PostItColor | null)}
+      >
+        <option value="">Por prioridad</option>
+        {Object.entries(postItColors).map(([key, color]) => (
+          <option value={key} key={key}>
+            {color.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
 }
 
 export function MembersPanel({
@@ -38,7 +60,8 @@ export function MembersPanel({
   return (
     <div className="members-panel">
       <p className="muted">
-        El color de cada miembro se aplica a sus post-its en todos los tableros. La prioridad se conserva en la etiqueta.
+        El color de cada miembro se aplica a sus post-its en todos los tableros. La prioridad se
+        conserva en la etiqueta.
       </p>
       <p className="muted">
         Los miembros aparecen aquí al iniciar sesión por primera vez. Para sumar a alguien, créale
@@ -48,11 +71,20 @@ export function MembersPanel({
         <ul className="member-list" aria-label="Miembros del espacio">
           {users.map((user) => (
             <li key={user.id}>
-              <span className="avatar" aria-hidden="true" style={{ backgroundColor: user.color ? postItColors[user.color].value : undefined }}>
+              <span
+                className="avatar"
+                aria-hidden="true"
+                style={{ backgroundColor: user.color ? postItColors[user.color].value : undefined }}
+              >
                 {user.name.slice(0, 1)}
               </span>
               <span className="member-name">{user.name}</span>
-              <ColorSelect label={`Color de ${user.name}`} value={user.color} onChange={(value) => void changeColor(user.id, value)} disabled={busy} />
+              <ColorSelect
+                label={`Color de ${user.name}`}
+                value={user.color}
+                onChange={(value) => void changeColor(user.id, value)}
+                disabled={busy}
+              />
             </li>
           ))}
         </ul>

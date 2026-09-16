@@ -1,7 +1,7 @@
 [project]
-name = "crokbit-api"
+name = "corkbit-api"
 version = "0.1.0"
-description = "Crokbit physical-digital Kanban API"
+description = "Corkbit physical-digital Kanban API"
 requires-python = ">=3.12"
 dependencies = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.34,<1", "sqlalchemy>=2.0,<3", "alembic>=1.14,<2", "pydantic-settings>=2.7,<3", "psycopg[binary]>=3.2,<4", "fastmcp>=4,<5", "pyjwt[crypto]>=2.10,<3"]
 

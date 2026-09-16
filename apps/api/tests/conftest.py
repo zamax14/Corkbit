@@ -21,7 +21,7 @@ def database(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Generator[sessi
     monkeypatch.setenv("DATABASE_URL", url)
     monkeypatch.setenv("AGENT_TOKEN", "test-agent-secret")
     monkeypatch.setenv("PUBLIC_BASE_URL", "https://board.example.test")
-    monkeypatch.setenv("OIDC_ISSUER", "https://keycloak.example.test/realms/crokbit")
+    monkeypatch.setenv("OIDC_ISSUER", "https://keycloak.example.test/realms/corkbit")
     get_settings.cache_clear()
     command.upgrade(Config("alembic.ini"), "head")
     engine = create_engine(url, connect_args={"check_same_thread": False, "timeout": 30})

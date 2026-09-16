@@ -27,11 +27,14 @@ def test_board_is_closed_without_a_session(anonymous: TestClient) -> None:
 
     # Dos excepciones deliberadas: el healthcheck de Docker y el agente con su propio token.
     assert anonymous.get("/health").json() == {"status": "ok"}
-    assert anonymous.post(
-        "/printers/1/claim",
-        json={"agent_id": "office-agent"},
-        headers={"X-Agent-Token": "test-agent-secret"},
-    ).status_code == 200
+    assert (
+        anonymous.post(
+            "/printers/1/claim",
+            json={"agent_id": "office-agent"},
+            headers={"X-Agent-Token": "test-agent-secret"},
+        ).status_code
+        == 200
+    )
     # El token del agente no sirve como sesión de persona.
     agent_only = anonymous.get("/tasks", headers={"X-Agent-Token": "test-agent-secret"})
     assert agent_only.status_code == 401

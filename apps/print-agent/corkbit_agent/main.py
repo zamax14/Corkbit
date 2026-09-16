@@ -10,9 +10,9 @@ from typing import Any
 
 import httpx
 
-from crokbit_agent.api import API
-from crokbit_agent.config import Config
-from crokbit_agent.printer import print_job
+from corkbit_agent.api import API
+from corkbit_agent.config import Config
+from corkbit_agent.printer import print_job
 
 logger = logging.getLogger(__name__)
 

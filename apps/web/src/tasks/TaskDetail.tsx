@@ -158,7 +158,7 @@ export function TaskDetail({
           <hr />
           <QRCodeSVG value={task.url} size={132} marginSize={0} />
           <p className="ticket-line">{taskCode(task.id)}</p>
-          <p className="ticket-brand">crokbit.</p>
+          <p className="ticket-brand">corkbit.</p>
         </article>,
         document.body,
       )}

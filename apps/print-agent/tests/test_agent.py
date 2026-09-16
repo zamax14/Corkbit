@@ -5,10 +5,10 @@ from unittest.mock import Mock
 import httpx
 import pytest
 
-from crokbit_agent.config import Config
-from crokbit_agent.main import Agent
-from crokbit_agent.printer import print_job
-from crokbit_agent.renderer import clean, render
+from corkbit_agent.config import Config
+from corkbit_agent.main import Agent
+from corkbit_agent.printer import print_job
+from corkbit_agent.renderer import clean, render
 
 
 @pytest.fixture()

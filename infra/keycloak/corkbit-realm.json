@@ -1,7 +1,7 @@
 {
-  "realm": "crokbit",
+  "realm": "corkbit",
   "enabled": true,
-  "displayName": "Crokbit",
+  "displayName": "Corkbit",
   "registrationAllowed": false,
   "registrationEmailAsUsername": false,
   "resetPasswordAllowed": false,
@@ -77,8 +77,8 @@
   },
   "clients": [
     {
-      "clientId": "crokbit-web",
-      "name": "Crokbit (tablero)",
+      "clientId": "corkbit-web",
+      "name": "Corkbit (tablero)",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": true,
@@ -87,22 +87,22 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "redirectUris": [
-        "${CROKBIT_WEB_URL}/"
+        "${CORKBIT_WEB_URL}/"
       ],
       "webOrigins": [
-        "${CROKBIT_WEB_URL}"
+        "${CORKBIT_WEB_URL}"
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "${CROKBIT_WEB_URL}/"
+        "post.logout.redirect.uris": "${CORKBIT_WEB_URL}/"
       },
       "protocolMappers": [
         {
-          "name": "audience-crokbit-api",
+          "name": "audience-corkbit-api",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-audience-mapper",
           "config": {
-            "included.custom.audience": "crokbit-api",
+            "included.custom.audience": "corkbit-api",
             "access.token.claim": "true"
           }
         }
@@ -111,8 +111,8 @@
   ],
   "clientScopes": [
     {
-      "name": "crokbit-api-audience",
-      "description": "Anade crokbit-api a la audiencia de todo token del realm",
+      "name": "corkbit-api-audience",
+      "description": "Anade corkbit-api a la audiencia de todo token del realm",
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "false",
@@ -120,11 +120,11 @@
       },
       "protocolMappers": [
         {
-          "name": "audience-crokbit-api",
+          "name": "audience-corkbit-api",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-audience-mapper",
           "config": {
-            "included.custom.audience": "crokbit-api",
+            "included.custom.audience": "corkbit-api",
             "access.token.claim": "true",
             "id.token.claim": "false"
           }
@@ -139,6 +139,6 @@
     "profile",
     "roles",
     "web-origins",
-    "crokbit-api-audience"
+    "corkbit-api-audience"
   ]
 }

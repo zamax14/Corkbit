@@ -4,7 +4,7 @@ Diseño aprobado el 2026-09-15. Sustituye al MVP sin login descrito en el README
 
 ## Problema
 
-Crokbit no tiene autenticación: quien alcanza la web o la API puede crear, mover, borrar e
+Corkbit no tiene autenticación: quien alcanza la web o la API puede crear, mover, borrar e
 imprimir. Eso bastaba en una red privada de una persona. No basta para el despliegue previsto:
 una Raspberry Pi 4 (8 GB) en la oficina del jefe, con la impresora térmica conectada, usada por
 un equipo real y con ChatGPT hablando por MCP desde internet.
@@ -63,7 +63,7 @@ cambie de correo.
 
 En el primer login, la API recibe un token válido con un `sub` desconocido y crea la fila
 copiando nombre y correo de los claims. **Dar de alta en Keycloak es dar de alta en el tablero**;
-no hay alta manual en Crokbit.
+no hay alta manual en Corkbit.
 
 Las tareas siguen apuntando a `users.id`, no a Keycloak. Si se borra una persona del IdP, sus
 tareas no quedan huérfanas: la fila local permanece, marcada como inactiva, y el histórico se
@@ -73,12 +73,12 @@ conserva.
 
 **Persona en el navegador.** `keycloak-js` redirige a Keycloak, la persona se autentica con
 contraseña y TOTP, y vuelve con un código que se canjea por token mediante PKCE. El cliente
-`crokbit-web` es público (sin secreto, que es lo correcto para un SPA) con redirect URIs exactas.
+`corkbit-web` es público (sin secreto, que es lo correcto para un SPA) con redirect URIs exactas.
 La cabecera `Authorization: Bearer` se añade en la función `request()` de
 `apps/web/src/api/client.ts`, único punto por el que pasan todas las llamadas.
 
 **ChatGPT por MCP.** `KeycloakAuthProvider` publica los metadatos de recurso protegido. ChatGPT
-los descubre, se registra en `/realms/crokbit/clients-registrations/openid-connect`, manda al
+los descubre, se registra en `/realms/corkbit/clients-registrations/openid-connect`, manda al
 usuario al login y recibe un token acotado al servidor MCP.
 
 **Agente de impresión.** Sin cambios: sigue con `AGENT_TOKEN`. Es máquina contra máquina, sin

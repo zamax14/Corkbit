@@ -49,8 +49,8 @@ def test_keycloak_guards_the_mcp_endpoint(monkeypatch: pytest.MonkeyPatch) -> No
     assert build_server(app).auth is None
 
     # Con realm y URL publica, el servidor MCP queda detras de Keycloak.
-    monkeypatch.setenv("OIDC_ISSUER", "https://keycloak.example.test/realms/crokbit")
-    monkeypatch.setenv("MCP_BASE_URL", "https://crokbit.example.test")
+    monkeypatch.setenv("OIDC_ISSUER", "https://keycloak.example.test/realms/corkbit")
+    monkeypatch.setenv("MCP_BASE_URL", "https://corkbit.example.test")
     get_settings.cache_clear()
     auth = build_server(app).auth
     assert isinstance(auth, KeycloakAuthProvider)

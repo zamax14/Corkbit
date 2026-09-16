@@ -1,16 +1,16 @@
-name: crokbit
+name: corkbit
 services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: crokbit
-      POSTGRES_USER: crokbit
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crokbit-local}
+      POSTGRES_DB: corkbit
+      POSTGRES_USER: corkbit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-corkbit-local}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ../infra/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U crokbit -d crokbit"]
+      test: ["CMD-SHELL", "pg_isready -U corkbit -d corkbit"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -25,14 +25,14 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Define KEYCLOAK_ADMIN_PASSWORD in .env}
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://db:5432/keycloak
-      KC_DB_USERNAME: crokbit
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-crokbit-local}
+      KC_DB_USERNAME: corkbit
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-corkbit-local}
       KC_HOSTNAME: ${KEYCLOAK_URL:-http://localhost:8081}
       KC_HOSTNAME_ADMIN: ${KEYCLOAK_ADMIN_URL:-http://localhost:8081}
       KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: xforwarded
       KC_HEALTH_ENABLED: "true"
-      CROKBIT_WEB_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
+      CORKBIT_WEB_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
     ports:
       - "${KEYCLOAK_PORT:-8081}:8080"
     volumes:
@@ -50,11 +50,11 @@ services:
   api:
     build: ../apps/api
     environment:
-      DATABASE_URL: postgresql+psycopg://crokbit:${POSTGRES_PASSWORD:-crokbit-local}@db:5432/crokbit
+      DATABASE_URL: postgresql+psycopg://corkbit:${POSTGRES_PASSWORD:-corkbit-local}@db:5432/corkbit
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
       AGENT_TOKEN: ${AGENT_TOKEN:?Define AGENT_TOKEN in .env}
       OIDC_ISSUER: ${OIDC_ISSUER:-}
-      OIDC_AUDIENCE: ${OIDC_AUDIENCE:-crokbit-api}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:-corkbit-api}
       MCP_BASE_URL: ${MCP_BASE_URL:-}
       WIP_LIMIT: ${WIP_LIMIT:-5}
       ROOT_PATH: /api

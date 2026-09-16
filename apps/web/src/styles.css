@@ -471,21 +471,62 @@ h1 em {
   transform-origin: bottom right;
   pointer-events: none;
 }
-.drag-card .note { transform: none; }
+.drag-card .note {
+  transform: none;
+}
 .simple-notes .note-top,
 .simple-notes .note-body p,
 .simple-notes .note-priority,
 .simple-notes .note-date,
-.simple-notes .note-print { display: none; }
-.simple-notes .note { min-height: 130px; }
-.simple-notes .note-bottom { margin-top: 18px; }
-.note-view-switch { display: flex; align-items: center; gap: 10px; margin: 12px 0; font-size: 13px; cursor: pointer; }
-.note-view-switch input { position: absolute; opacity: 0; width: 40px; height: 24px; }
-.switch-track { width: 40px; height: 24px; border-radius: 20px; background: #737b80; padding: 3px; }
-.switch-track::before { content: ''; display: block; width: 18px; height: 18px; border-radius: 50%; background: white; transition: transform .15s; }
-.note-view-switch input:checked + .switch-track { background: #496653; }
-.note-view-switch input:checked + .switch-track::before { transform: translateX(16px); }
-.note-view-switch input:focus-visible + .switch-track { outline: 2px solid #273e52; outline-offset: 3px; }
+.simple-notes .note-print {
+  display: none;
+}
+.simple-notes .note {
+  min-height: 130px;
+}
+.simple-notes .note-bottom {
+  margin-top: 18px;
+}
+.note-view-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  font-size: 13px;
+  cursor: pointer;
+}
+.note-view-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 40px;
+  height: 24px;
+}
+.switch-track {
+  width: 40px;
+  height: 24px;
+  border-radius: 20px;
+  background: #737b80;
+  padding: 3px;
+}
+.switch-track::before {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.15s;
+}
+.note-view-switch input:checked + .switch-track {
+  background: #496653;
+}
+.note-view-switch input:checked + .switch-track::before {
+  transform: translateX(16px);
+}
+.note-view-switch input:focus-visible + .switch-track {
+  outline: 2px solid #273e52;
+  outline-offset: 3px;
+}
 .drag-preview::before {
   left: calc(50% - 7px);
   top: 5px;
@@ -493,8 +534,16 @@ h1 em {
   height: 15px;
   border-radius: 50%;
   border: 1px solid #1b2025;
-  background: radial-gradient(circle at 32% 25%, #859097 0%, #424c53 25%, #202930 60%, #10171c 100%);
-  box-shadow: 1px 2px 1px #ffffff35 inset, 2px 4px 3px #35251580;
+  background: radial-gradient(
+    circle at 32% 25%,
+    #859097 0%,
+    #424c53 25%,
+    #202930 60%,
+    #10171c 100%
+  );
+  box-shadow:
+    1px 2px 1px #ffffff35 inset,
+    2px 4px 3px #35251580;
 }
 .drag-preview .eyebrow {
   display: block;
@@ -561,7 +610,9 @@ h1 em {
 }
 .note::after {
   pointer-events: none;
-  transition: border-width 0.15s, filter 0.15s;
+  transition:
+    border-width 0.15s,
+    filter 0.15s;
 }
 .note:has(.drag-corner:hover)::after,
 .note:has(.drag-corner:focus-visible)::after {
@@ -1722,8 +1773,20 @@ textarea::placeholder {
   border-radius: 7px;
   background:
     url('/cork-texture.png') padding-box,
-    linear-gradient(135deg, #707a82, #f1f4f5 8%, #a6afb6 24%, #dce1e4 46%, #7b858d 72%, #c3cbd0 92%, #626d75) border-box;
-  background-size: 560px 560px, 100% 100%;
+    linear-gradient(
+        135deg,
+        #707a82,
+        #f1f4f5 8%,
+        #a6afb6 24%,
+        #dce1e4 46%,
+        #7b858d 72%,
+        #c3cbd0 92%,
+        #626d75
+      )
+      border-box;
+  background-size:
+    560px 560px,
+    100% 100%;
   background-repeat: repeat, no-repeat;
   box-shadow:
     inset 0 2px 12px #442b2366,

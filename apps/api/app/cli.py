@@ -10,7 +10,7 @@ from app.services.tasks import create_task
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Configura Crokbit")
+    parser = argparse.ArgumentParser(description="Configura Corkbit")
     parser.add_argument("command", choices=["printer", "demo"])
     parser.add_argument("--agent-id", default="office-agent")
     parser.add_argument("--name", default="Impresora de oficina · 80 mm")

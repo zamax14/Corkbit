@@ -86,9 +86,7 @@ def users_list(db: DB) -> list[User]:
     """
     return list(
         db.scalars(
-            select(User)
-            .where(User.active.is_(True), User.subject.is_not(None))
-            .order_by(User.name)
+            select(User).where(User.active.is_(True), User.subject.is_not(None)).order_by(User.name)
         )
     )
 

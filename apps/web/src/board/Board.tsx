@@ -158,12 +158,14 @@ export function Board({
   const positions = useRef(new Map<string, DOMRect>());
   const [order, setOrder] = useState<number[]>(() => {
     try {
-      const saved: unknown = JSON.parse(localStorage.getItem('crokbit.note-order') || '[]');
+      const saved: unknown = JSON.parse(localStorage.getItem('corkbit.note-order') || '[]');
       return Array.isArray(saved) ? saved.filter((id): id is number => Number.isInteger(id)) : [];
-    } catch { return []; }
+    } catch {
+      return [];
+    }
   });
   const orderedTasks = [...tasks].sort((a, b) => {
-    const rank = (id: number) => order.includes(id) ? order.indexOf(id) : -1;
+    const rank = (id: number) => (order.includes(id) ? order.indexOf(id) : -1);
     return rank(a.id) - rank(b.id);
   });
   useLayoutEffect(() => {
@@ -178,7 +180,8 @@ export function Board({
         const y = previous.top - rect.top;
         if (Math.abs(x) > 1 || Math.abs(y) > 1) {
           node.animate([{ translate: `${x}px ${y}px` }, { translate: '0 0' }], {
-            duration: 380, easing: 'cubic-bezier(.22, 1, .36, 1)',
+            duration: 380,
+            easing: 'cubic-bezier(.22, 1, .36, 1)',
           });
         }
       }
@@ -203,11 +206,18 @@ export function Board({
       return bounds && y < bounds.top + bounds.height / 2;
     });
     const next = orderedTasks.map((task) => task.id).filter((taskId) => taskId !== id);
-    const index = before ? next.indexOf(before.id) : target.length
-      ? next.indexOf(target[target.length - 1].id) + 1 : next.length;
+    const index = before
+      ? next.indexOf(before.id)
+      : target.length
+        ? next.indexOf(target[target.length - 1].id) + 1
+        : next.length;
     next.splice(index, 0, id);
     setOrder(next);
-    try { localStorage.setItem('crokbit.note-order', JSON.stringify(next)); } catch { /* Storage may be disabled. */ }
+    try {
+      localStorage.setItem('corkbit.note-order', JSON.stringify(next));
+    } catch {
+      /* Storage may be disabled. */
+    }
     onMove(id, status);
   }
   return (
@@ -232,8 +242,13 @@ export function Board({
       }}
     >
       <label className="note-view-switch">
-        <input type="checkbox" role="switch" checked={descriptions}
-          disabled={Boolean(active)} onChange={(event) => setDescriptions(event.target.checked)} />
+        <input
+          type="checkbox"
+          role="switch"
+          checked={descriptions}
+          disabled={Boolean(active)}
+          onChange={(event) => setDescriptions(event.target.checked)}
+        />
         <span className="switch-track" aria-hidden="true" />
         Mostrar descripciones
       </label>
@@ -253,9 +268,7 @@ export function Board({
       </div>
       <DragOverlay adjustScale={false} dropAnimation={null}>
         {active && (
-          <div
-            className={`drag-card ${descriptions ? '' : 'simple-notes'}`}
-          >
+          <div className={`drag-card ${descriptions ? '' : 'simple-notes'}`}>
             <TaskCard task={active} onOpen={onOpen} onPrint={onPrint} busy={busy} preview />
             <img className="drag-preview-hand" src="/hand.png" alt="" />
           </div>

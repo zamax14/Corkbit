@@ -1,4 +1,4 @@
-# Crokbit
+# Corkbit
 
 Un Kanban físico-digital: notas en un tablero de corcho que se convierten en tickets térmicos de 80 mm. Implementa el MVP y las capacidades de fase 2 de [los requisitos](pinboard_pm_requirements.md).
 
@@ -47,9 +47,9 @@ cliente:
 
 ```bash
 # Con Keycloak activo, el cliente negocia OAuth solo; no hay token que pegar.
-claude mcp add --transport http crokbit https://tu-host.ts.net/mcp/
+claude mcp add --transport http corkbit https://tu-host.ts.net/mcp/
 # Desarrollo local, sin OIDC_ISSUER configurado
-claude mcp add --transport http crokbit http://localhost:8000/mcp/
+claude mcp add --transport http corkbit http://localhost:8000/mcp/
 ```
 
 ## Inicio rápido con Docker
@@ -101,14 +101,14 @@ make web    # http://localhost:5173
 make agent  # modo file por defecto
 ```
 
-La API local usa `apps/api/crokbit.db`. Vite redirige `/api` a la API; no hace falta configurar CORS para el uso habitual. Las variables de los ejemplos se leen desde el directorio de cada aplicación. `PUBLIC_BASE_URL` es la URL del **frontend**, no la API.
+La API local usa `apps/api/corkbit.db`. Vite redirige `/api` a la API; no hace falta configurar CORS para el uso habitual. Las variables de los ejemplos se leen desde el directorio de cada aplicación. `PUBLIC_BASE_URL` es la URL del **frontend**, no la API.
 
 ## Impresión
 
 Dos caminos, según dónde esté la impresora:
 
 **«Imprimir aquí»** abre el diálogo del navegador y usa la impresora instalada en **el equipo desde
-el que miras el tablero**. Funciona aunque Crokbit esté en un servidor remoto: el documento no pasa
+el que miras el tablero**. Funciona aunque Corkbit esté en un servidor remoto: el documento no pasa
 por el servidor, va directo al spooler de tu sistema. No necesita agente, ni token, ni puertos
 abiertos; sí necesita la impresora instalada en tu SO. El ticket se maqueta a 80 mm con su QR
 (`@page { size: 80mm auto }` en `apps/web/src/styles.css`).

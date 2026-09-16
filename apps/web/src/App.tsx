@@ -110,7 +110,8 @@ export default function App() {
     };
   }, [reload]);
   useEffect(() => {
-    const onPopState = () => setBoardId(Number(new URLSearchParams(window.location.search).get('board')) || null);
+    const onPopState = () =>
+      setBoardId(Number(new URLSearchParams(window.location.search).get('board')) || null);
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
@@ -175,7 +176,8 @@ export default function App() {
   }
   async function save(data: TaskInput, shouldPrint: boolean, printer: number) {
     if (mutation.current) throw new Error('Espera a que termine la operación actual.');
-    if (modal?.kind !== 'edit' && !activeBoardId) throw new Error('Selecciona un tablero para crear la tarea.');
+    if (modal?.kind !== 'edit' && !activeBoardId)
+      throw new Error('Selecciona un tablero para crear la tarea.');
     mutation.current = true;
     epoch.current++;
     setBusy(true);
@@ -219,7 +221,9 @@ export default function App() {
   function rememberUser(user: User) {
     epoch.current++;
     setUsers((current) => [...current.filter((item) => item.id !== user.id), user]);
-    setTasks((current) => current.map((task) => task.assignee_id === user.id ? { ...task, assignee: user } : task));
+    setTasks((current) =>
+      current.map((task) => (task.assignee_id === user.id ? { ...task, assignee: user } : task)),
+    );
   }
   async function changeMember(action: () => Promise<User>) {
     if (mutation.current) throw new Error('Espera a que termine la operación actual.');
@@ -352,39 +356,83 @@ export default function App() {
                   <span />
                   IDEAS EN ACCIÓN
                 </div>
-                <h1>{showGallery ? 'Tus tableros.' : <>Tu trabajo, <em>a la vista.</em></>}</h1>
-                <p>{showGallery ? 'Cada proyecto tiene su espacio. Elige dónde seguir.' : 'De una idea a una nota. De una nota a algo hecho.'}</p>
+                <h1>
+                  {showGallery ? (
+                    'Tus tableros.'
+                  ) : (
+                    <>
+                      Tu trabajo, <em>a la vista.</em>
+                    </>
+                  )}
+                </h1>
+                <p>
+                  {showGallery
+                    ? 'Cada proyecto tiene su espacio. Elige dónde seguir.'
+                    : 'De una idea a una nota. De una nota a algo hecho.'}
+                </p>
               </div>
               <button
                 className="primary new-task"
                 disabled={loading || busy || Boolean(loadError)}
-                onClick={() => setModal(showGallery ? { kind: 'board' } : { kind: 'new', status: 'BACKLOG' })}
+                onClick={() =>
+                  setModal(showGallery ? { kind: 'board' } : { kind: 'new', status: 'BACKLOG' })
+                }
               >
                 <Plus size={19} />
                 {showGallery ? 'Nuevo tablero' : 'Nueva tarea'}
               </button>
             </div>
             <nav className="browser-tabs" aria-label="Tableros">
-              <button className="browser-tab gallery-tab" aria-current={showGallery ? 'page' : undefined} disabled={busy} onClick={() => selectBoard(null)}><LayoutDashboard size={17} />Todos los tableros</button>
-              {boards.map((board) => <button key={board.id} className="browser-tab" aria-label={board.name} title={board.name} aria-current={activeBoardId === board.id ? 'page' : undefined} disabled={busy} onClick={() => selectBoard(board.id)}><span>{board.name}</span></button>)}
-              <button className="tab-new" aria-label="Nuevo tablero" title="Nuevo tablero" disabled={loading || busy || Boolean(loadError)} onClick={() => setModal({ kind: 'board' })}><Plus size={18} /></button>
-            </nav>
-            {!showGallery && <div className="board-toolbar">
-              <span className="board-summary">{boardTasks.length} tareas</span>
-              <div className="toolbar-right">
-                <span className="progress-label">
-                  <Check size={15} />
-                  {done} de {boardTasks.length} terminadas
-                </span>
-                <button className="printer-status" onClick={() => setModal({ kind: 'prints' })}>
-                  <span className={`status-dot ${online ? 'online' : ''}`} />
-                  <Printer size={16} />
-                  <span>{online ? 'Impresora conectada' : 'Impresora sin conexión'}</span>
-                  {pending > 0 && <b>{pending}</b>}
-                  {failed > 0 && <b className="failed-count">{failed} error</b>}
+              <button
+                className="browser-tab gallery-tab"
+                aria-current={showGallery ? 'page' : undefined}
+                disabled={busy}
+                onClick={() => selectBoard(null)}
+              >
+                <LayoutDashboard size={17} />
+                Todos los tableros
+              </button>
+              {boards.map((board) => (
+                <button
+                  key={board.id}
+                  className="browser-tab"
+                  aria-label={board.name}
+                  title={board.name}
+                  aria-current={activeBoardId === board.id ? 'page' : undefined}
+                  disabled={busy}
+                  onClick={() => selectBoard(board.id)}
+                >
+                  <span>{board.name}</span>
                 </button>
+              ))}
+              <button
+                className="tab-new"
+                aria-label="Nuevo tablero"
+                title="Nuevo tablero"
+                disabled={loading || busy || Boolean(loadError)}
+                onClick={() => setModal({ kind: 'board' })}
+              >
+                <Plus size={18} />
+              </button>
+            </nav>
+            {!showGallery && (
+              <div className="board-toolbar">
+                <span className="board-summary">{boardTasks.length} tareas</span>
+                <div className="toolbar-right">
+                  <span className="progress-label">
+                    <Check size={15} />
+                    {done} de {boardTasks.length} terminadas
+                  </span>
+                  <button className="printer-status" onClick={() => setModal({ kind: 'prints' })}>
+                    <span className={`status-dot ${online ? 'online' : ''}`} />
+                    <Printer size={16} />
+                    <span>{online ? 'Impresora conectada' : 'Impresora sin conexión'}</span>
+                    {pending > 0 && <b>{pending}</b>}
+                    {failed > 0 && <b className="failed-count">{failed} error</b>}
+                  </button>
+                </div>
               </div>
-            </div>}
+            )}
           </>
         )}
         {loadError && (
@@ -410,7 +458,14 @@ export default function App() {
             {!missing && mobileTask && detail(mobileTask)}
           </div>
         ) : showGallery ? (
-          <BoardGallery boards={boards} tasks={tasks} onOpen={selectBoard} onNew={() => setModal({ kind: 'board' })} onDelete={deleteBoard} disabled={busy || Boolean(loadError)} />
+          <BoardGallery
+            boards={boards}
+            tasks={tasks}
+            onOpen={selectBoard}
+            onNew={() => setModal({ kind: 'board' })}
+            onDelete={deleteBoard}
+            disabled={busy || Boolean(loadError)}
+          />
         ) : (
           <Board
             tasks={boardTasks}
@@ -443,7 +498,10 @@ export default function App() {
       </main>
       {modal?.kind === 'members' && (
         <Dialog title="Miembros del espacio" onClose={close}>
-          <MembersPanel users={users} onColor={(id, color) => changeMember(() => api.setUserColor(id, color))} />
+          <MembersPanel
+            users={users}
+            onColor={(id, color) => changeMember(() => api.setUserColor(id, color))}
+          />
         </Dialog>
       )}
       {modal?.kind === 'board' && (

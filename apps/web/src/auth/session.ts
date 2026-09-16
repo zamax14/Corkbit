@@ -3,7 +3,7 @@ import Keycloak from 'keycloak-js';
 // La redirect URI registrada en Keycloak es exacta, sin comodines: siempre la raíz del sitio.
 // Eso rompería los QR de los tickets impresos, que apuntan a /t/{id}, así que el destino real
 // se guarda antes de salir y se restaura al volver.
-const DESTINATION = 'crokbit:destination';
+const DESTINATION = 'corkbit:destination';
 
 let keycloak: Keycloak | null = null;
 

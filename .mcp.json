@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "crokbit": {
+    "corkbit": {
       "type": "http",
       "url": "http://localhost:8080/api/mcp/"
     }

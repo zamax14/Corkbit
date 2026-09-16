@@ -2,7 +2,7 @@ from typing import Any
 
 import httpx
 
-from crokbit_agent.config import Config
+from corkbit_agent.config import Config
 
 
 class API:

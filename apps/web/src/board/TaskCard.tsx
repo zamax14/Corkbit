@@ -1,7 +1,16 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { CSSProperties } from 'react';
 import { CalendarDays, Check, GripVertical, MessageSquare, Printer } from 'lucide-react';
-import { commentDateLabel, dateLabel, isOverdue, localDateLabel, priorityLabels, taskCode, taskPaperColor, type Task } from '../api/client';
+import {
+  commentDateLabel,
+  dateLabel,
+  isOverdue,
+  localDateLabel,
+  priorityLabels,
+  taskCode,
+  taskPaperColor,
+  type Task,
+} from '../api/client';
 
 export function TaskCard({
   task,
@@ -33,7 +42,12 @@ export function TaskCard({
       data-task-id={preview ? undefined : task.id}
       aria-hidden={preview || undefined}
       inert={preview || undefined}
-      style={{ '--rotation': `${[-1.3, 0.7, -0.4, 1.1][task.id % 4]}deg`, backgroundColor: taskPaperColor(task) } as CSSProperties}
+      style={
+        {
+          '--rotation': `${[-1.3, 0.7, -0.4, 1.1][task.id % 4]}deg`,
+          backgroundColor: taskPaperColor(task),
+        } as CSSProperties
+      }
       className={`note note-${task.priority.toLowerCase()} ${isDragging ? 'dragging' : ''} ${task.status === 'DONE' ? 'finished' : ''}`}
     >
       <div className="note-top">

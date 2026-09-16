@@ -21,7 +21,7 @@ FastAPI → servicios → repositorios / SQLAlchemy
 
 ## Monorepo
 
-- `apps/web`: React, TypeScript, Vite, Tailwind CSS; componentes de tablero, formularios y detalles. El estado viene de la API; no se guardan tareas ficticias en localStorage. El estilo de corcho se genera en CSS con textura SVG local. La paleta carbón/salvia/corcho/papel/cielo y la fuente Inter local toman como referencia `guia_visual.png`; se usa la marca Crokbit.
+- `apps/web`: React, TypeScript, Vite, Tailwind CSS; componentes de tablero, formularios y detalles. El estado viene de la API; no se guardan tareas ficticias en localStorage. El estilo de corcho se genera en CSS con textura SVG local. La paleta carbón/salvia/corcho/papel/cielo y la fuente Inter local toman como referencia `guia_visual.png`; se usa la marca Corkbit.
 - `apps/api`: FastAPI / Pydantic; `api` expone rutas, `mcp` deriva el servidor MCP del propio OpenAPI de la app (sin lógica paralela), `services` aplica transacciones y reglas, `repositories` encapsula consultas compartidas, `models` define persistencia, `schemas` valida entradas y salidas, `db` administra sesiones.
 - `apps/print-agent`: configuración, cliente HTTP, renderizador, conexión ESC/POS y bucle con recuperación persistente.
 - `infra/compose.yaml`: PostgreSQL, API, web y agente opcional. Nginx preserva las rutas `/t/{id}` al recargar.
@@ -48,9 +48,9 @@ El tablero no incluye autenticación de usuarios. Usa red privada o un proxy de 
 Para respaldar PostgreSQL:
 
 ```bash
-docker compose --env-file .env -f infra/compose.yaml exec -T db pg_dump -U crokbit crokbit > crokbit.sql
+docker compose --env-file .env -f infra/compose.yaml exec -T db pg_dump -U corkbit corkbit > corkbit.sql
 ```
 
-Para SQLite, detén la API antes de copiar `apps/api/crokbit.db`. Respaldar también el directorio persistente del agente conserva los acuses aún no entregados. La prueba de restauración debe hacerse en una instancia separada.
+Para SQLite, detén la API antes de copiar `apps/api/corkbit.db`. Respaldar también el directorio persistente del agente conserva los acuses aún no entregados. La prueba de restauración debe hacerse en una instancia separada.
 
 Documentación técnica utilizada: [FastAPI](https://fastapi.tiangolo.com/tutorial/sql-databases/), [dnd-kit](https://dndkit.com/legacy/presets/sortable/overview/) y [python-escpos](https://python-escpos.readthedocs.io/en/latest/api/printer.html).

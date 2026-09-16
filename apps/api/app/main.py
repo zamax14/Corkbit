@@ -10,7 +10,7 @@ from app.config import get_settings
 from app.mcp import build_server
 
 app = FastAPI(
-    title="Crokbit API",
+    title="Corkbit API",
     version="0.1.0",
     description="Kanban físico-digital",
     root_path=get_settings().root_path,

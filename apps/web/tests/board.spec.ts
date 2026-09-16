@@ -118,7 +118,7 @@ test('inserta entre notas y conserva el orden al recargar', async ({ page, reque
   await page.mouse.move(source.x + source.width - 8, source.y + source.height - 8);
   await page.mouse.down();
   await page.mouse.move(source.x + source.width + 12, source.y + source.height, { steps: 3 });
-  await page.mouse.move(last.x + last.width / 2, last.y + last.height * .55, { steps: 15 });
+  await page.mouse.move(last.x + last.width / 2, last.y + last.height * 0.55, { steps: 15 });
   await page.mouse.up();
   await expect(target.locator('.note h3')).toHaveText(['Primera', 'Insertar aquí', 'Última']);
   await page.reload();
@@ -325,7 +325,10 @@ test('galería de tableros: vista previa, apertura y borrado con confirmación',
   expect((await (await request.get('/api/tasks')).json()).length).toBe(0);
 });
 
-test('historial de comentarios: escribir, ver en la tarjeta y borrar', async ({ page, request }) => {
+test('historial de comentarios: escribir, ver en la tarjeta y borrar', async ({
+  page,
+  request,
+}) => {
   const created = await request.post('/api/tasks', { data: { title: 'Entregar capítulo' } });
   const task = await created.json();
   expect(task.comment_count).toBe(0);
@@ -358,6 +361,9 @@ test('historial de comentarios: escribir, ver en la tarjeta y borrar', async ({ 
 
   await page.locator(`[data-task-id="${task.id}"] .note-body`).click();
   await page.locator('.timeline-list li').first().hover();
-  await page.getByRole('button', { name: /^Borrar comentario del/ }).first().click();
+  await page
+    .getByRole('button', { name: /^Borrar comentario del/ })
+    .first()
+    .click();
   await expect(page.locator('.timeline-list li p')).toHaveText(['Hablé con el asesor']);
 });

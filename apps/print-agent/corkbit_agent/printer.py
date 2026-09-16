@@ -3,8 +3,8 @@ from typing import Any
 
 from escpos.printer import File, Network, Usb
 
-from crokbit_agent.config import Config
-from crokbit_agent.renderer import render, ticket_text
+from corkbit_agent.config import Config
+from corkbit_agent.renderer import render, ticket_text
 
 logger = logging.getLogger(__name__)
 

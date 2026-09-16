@@ -58,7 +58,7 @@ def keycloak_auth() -> AuthProvider | None:
 def build_server(app: FastAPI) -> FastMCP:
     return FastMCP.from_fastapi(
         app,
-        name="Crokbit",
+        name="Corkbit",
         mcp_names=NAMES,
         route_maps=[
             # El primer RouteMap que coincide gana: estas tres rutas de impresion se publican

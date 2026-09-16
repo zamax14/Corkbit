@@ -247,7 +247,7 @@ wheels = [
 ]
 
 [[package]]
-name = "crokbit-api"
+name = "corkbit-api"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

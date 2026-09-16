@@ -1,6 +1,6 @@
 # Cobertura del MVP
 
-Fuente original: [pinboard_pm_requirements.md](../pinboard_pm_requirements.md). El producto usa el nombre Crokbit; el documento original se conserva como referencia histórica.
+Fuente original: [pinboard_pm_requirements.md](../pinboard_pm_requirements.md). El producto usa el nombre Corkbit; el documento original se conserva como referencia histórica.
 
 | Requisito | Implementación |
 |---|---|

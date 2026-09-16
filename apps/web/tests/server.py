@@ -5,7 +5,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-with tempfile.TemporaryDirectory(prefix="crokbit-e2e-") as directory:
+with tempfile.TemporaryDirectory(prefix="corkbit-e2e-") as directory:
     os.environ["DATABASE_URL"] = f"sqlite:///{directory}/e2e.db"
     os.environ["AGENT_TOKEN"] = "browser-test-token"
     os.environ["PUBLIC_BASE_URL"] = "http://127.0.0.1:5174"
