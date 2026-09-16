@@ -26,6 +26,10 @@ Escribes una tarea en el tablero y sale por la impresora térmica como un post-i
 QR. Lo pegas en un corcho de verdad. Cuando alguien escanea el QR, vuelve a la tarea. El corcho es
 el tablero; la pantalla es su espejo.
 
+<div align="center">
+<img src="docs/escritorio.png" alt="Corkbit en un escritorio: el tablero en el portátil, la impresora térmica sacando un ticket y el corcho con post-its" width="100%">
+</div>
+
 Y como la API entera se publica también como servidor **MCP**, un agente de IA mueve tareas, deja
 comentarios e imprime tickets con las mismas validaciones y las mismas transacciones que la web.
 No hay una lógica paralela para la IA: son las mismas rutas.
@@ -61,25 +65,18 @@ No hay una lógica paralela para la IA: son las mismas rutas.
 ## Cómo se ve
 
 <div align="center">
-
 <img src="docs/screenshots/tablero.png" alt="El tablero de Corkbit: tres columnas de corcho con post-its" width="100%">
-
-<br><br>
-
-<table>
-<tr>
-<td width="50%"><img src="docs/screenshots/movil.png" alt="Detalle de una tarea en móvil"></td>
-<td width="50%"><img src="docs/screenshots/tableros-movil.png" alt="Galería de tableros en móvil"></td>
-</tr>
-<tr>
-<td align="center"><em>Detalle de tarea tras escanear su QR</em></td>
-<td align="center"><em>Galería de tableros</em></td>
-</tr>
-</table>
-
 </div>
 
 ## Agentes de IA (MCP)
+
+Le pides a tu chat de siempre que organice el trabajo —que haga de scrum master, de PM, o
+simplemente que apunte lo que acabáis de decidir— y la tarea aparece en el tablero y sale por la
+impresora.
+
+<div align="center">
+<img src="docs/flujo-mcp.png" alt="Alguien le pide a ChatGPT o Claude que cree una tarea; Corkbit la recibe, la muestra en el tablero y la imprime" width="100%">
+</div>
 
 La API publica un servidor [MCP](https://modelcontextprotocol.io) en `/mcp`, con transporte HTTP.
 Las herramientas se derivan del propio OpenAPI, así que un agente aplica las mismas validaciones y
