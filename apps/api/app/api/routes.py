@@ -11,7 +11,6 @@ from app.db.session import get_db
 from app.models.entities import (
     Board,
     Comment,
-    JobStatus,
     Printer,
     PrintJob,
     Task,
@@ -254,21 +253,6 @@ def jobs_list(
     """Lista los trabajos de impresión recientes con su estado y reintentos."""
     return list(
         db.scalars(select(PrintJob).order_by(PrintJob.id.desc()).offset(offset).limit(limit))
-    )
-
-
-@router.get("/print-jobs/pending", response_model=list[JobOut], tags=["printing"])
-def jobs_pending(db: DB, printer_id: int = 1) -> list[PrintJob]:
-    return list(
-        db.scalars(
-            select(PrintJob)
-            .where(
-                PrintJob.printer_id == printer_id,
-                PrintJob.status == JobStatus.PENDING,
-            )
-            .order_by(PrintJob.id)
-            .limit(100)
-        )
     )
 
 

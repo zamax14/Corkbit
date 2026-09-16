@@ -92,7 +92,7 @@ def test_atomic_save_print_and_snapshot(client: TestClient):
     assert response.status_code == 404
     assert client.get("/tasks").json() == []
     task = client.post("/tasks", json={"title": "Ticket original", "print_after_save": True}).json()
-    assert len(client.get("/print-jobs/pending").json()) == 1
+    assert len(client.get("/print-jobs").json()) == 1
     client.patch(f"/tasks/{task['id']}", json={"title": "Ticket nuevo"})
     new_job = client.post(f"/tasks/{task['id']}/print").json()
     jobs = client.get("/print-jobs").json()
