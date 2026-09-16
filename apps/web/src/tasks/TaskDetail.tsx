@@ -10,6 +10,7 @@ import {
   statuses,
   statusLabels,
   taskCode,
+  taskPaperColor,
   type Printer as PrinterType,
   type Status,
   type Task,
@@ -51,33 +52,29 @@ export function TaskDetail({
   }
   return (
     <div className="task-detail">
-      <div className="detail-meta">
-        <span className="task-code">{taskCode(task.id)}</span>
-        <span className={`priority priority-${task.priority.toLowerCase()}`}>
-          <i />
-          {priorityLabels[task.priority]}
-        </span>
-        <span className={task.printed_at ? 'ticket-state printed' : 'ticket-state'}>
-          <Printer size={13} />
-          {task.printed_at ? `Impresa · ${localDateLabel(task.printed_at)}` : 'Sin imprimir'}
-        </span>
-      </div>
-      <h2>{task.title}</h2>
-      <p className="detail-description">
-        {task.description || 'Sin descripción. A veces, el título lo dice todo.'}
-      </p>
-      <div className="detail-facts">
-        <span>
-          <UserRound size={17} />
-          {task.assignee?.name || 'Sin asignar'}
-        </span>
-        <span>
-          <CalendarDays size={17} />
-          {dateLabel(task.deadline)}
-          {task.deadline && ` ${task.deadline.slice(0, 4)}`}
-        </span>
-      </div>
-      <span className="field-caption">MOVER TAREA</span>
+      <article className="task-paper" style={{ backgroundColor: taskPaperColor(task) }}>
+        <div className="detail-meta">
+          <span className="task-code">{taskCode(task.id)}</span>
+          <span className={`priority priority-${task.priority.toLowerCase()}`}>
+            <i />
+            {priorityLabels[task.priority]}
+          </span>
+        </div>
+        <h2>{task.title}</h2>
+        {task.description && <p className="detail-description">{task.description}</p>}
+        <div className="detail-facts">
+          <span>
+            <UserRound size={17} />
+            {task.assignee?.name || 'Sin asignar'}
+          </span>
+          <span>
+            <CalendarDays size={17} />
+            {dateLabel(task.deadline)}
+            {task.deadline && ` ${task.deadline.slice(0, 4)}`}
+          </span>
+        </div>
+      </article>
+      <span className="field-caption">Estado</span>
       <div className="status-actions">
         {statuses.map((s) => (
           <button
@@ -92,46 +89,14 @@ export function TaskDetail({
           </button>
         ))}
       </div>
-      <TaskTimeline taskId={task.id} onChanged={onCommented} />
-      <div className="qr-panel">
-        <QRCodeSVG value={task.url} size={96} marginSize={2} title={`Abrir ${taskCode(task.id)}`} />
-        <div>
-          <h3>Del tablero al papel.</h3>
-          <p>Escanea el QR para abrir y mover esta tarea desde tu teléfono.</p>
-          <button className="text-button" onClick={() => void copy()}>
-            <Copy size={14} />
-            {copied ? 'Enlace copiado' : 'Copiar enlace'}
-          </button>
-          {copyError && <a href={task.url}>Abrir enlace de la tarea</a>}
-        </div>
-      </div>
-      <label className="printer-select">
-        Impresora
-        <select value={printer} onChange={(e) => setPrinter(Number(e.target.value))}>
-          {printers
-            .filter((p) => p.active)
-            .map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-        </select>
-      </label>
       <div className="detail-actions">
-        <button className="primary" onClick={onPrintHere}>
-          <Printer size={17} />
-          Imprimir aquí
-        </button>
-        <button
-          className="secondary"
-          disabled={busy || !printers.some((p) => p.active)}
-          onClick={() => onPrint(task, printer)}
-        >
-          Reimprimir
-        </button>
-        <button className="secondary" disabled={busy} onClick={onEdit}>
+        <button className="primary" disabled={busy} onClick={onEdit}>
           <Pencil size={16} />
           Editar
+        </button>
+        <button className="secondary" disabled={busy} onClick={onPrintHere}>
+          <Printer size={17} />
+          Imprimir aquí
         </button>
         <button
           className="icon-button danger"
@@ -142,22 +107,69 @@ export function TaskDetail({
           <Trash2 size={18} />
         </button>
       </div>
+      <details className="task-options">
+        <summary>Comentarios{task.comment_count > 0 && ` · ${task.comment_count}`}</summary>
+        <TaskTimeline taskId={task.id} onChanged={onCommented} />
+      </details>
+      <details className="task-options">
+        <summary>Compartir e imprimir</summary>
+        <span className={task.printed_at ? 'ticket-state printed' : 'ticket-state'}>
+          <Printer size={13} />
+          {task.printed_at ? `Impresa · ${localDateLabel(task.printed_at)}` : 'Sin imprimir'}
+        </span>
+        <div className="qr-panel">
+          <QRCodeSVG
+            value={task.url}
+            size={96}
+            marginSize={2}
+            title={`Abrir ${taskCode(task.id)}`}
+          />
+          <div>
+            <h3>Abrir en el teléfono</h3>
+            <p>Escanea el QR para ver la tarea.</p>
+            <button className="text-button" onClick={() => void copy()}>
+              <Copy size={14} />
+              {copied ? 'Enlace copiado' : 'Copiar enlace'}
+            </button>
+            {copyError && <a href={task.url}>Abrir enlace de la tarea</a>}
+          </div>
+        </div>
+        <label className="printer-select">
+          Impresora
+          <select value={printer} onChange={(e) => setPrinter(Number(e.target.value))}>
+            {printers
+              .filter((p) => p.active)
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+          </select>
+        </label>
+        <div className="detail-actions">
+          <button
+            className="secondary"
+            disabled={busy || !printers.some((p) => p.active)}
+            onClick={() => onPrint(task, printer)}
+          >
+            Reimprimir
+          </button>
+        </div>
+      </details>
       {createPortal(
         <article className="ticket-sheet" aria-hidden="true">
           <p className="ticket-line">
             {taskCode(task.id)} · {priorityLabels[task.priority]}
           </p>
-          <hr />
           <h1>{task.title}</h1>
-          <p className="ticket-label">Responsable</p>
-          <p>{task.assignee?.name || 'Sin asignar'}</p>
-          <p className="ticket-label">Fecha límite</p>
-          <p>{task.deadline || 'Sin fecha'}</p>
-          <p className="ticket-label">Estado</p>
-          <p>{statusLabels[task.status]}</p>
-          <hr />
+          {task.assignee && <p>{task.assignee.name}</p>}
+          {task.deadline && (
+            <p>
+              Para {dateLabel(task.deadline)} {task.deadline.slice(0, 4)}
+            </p>
+          )}
           <QRCodeSVG value={task.url} size={132} marginSize={0} />
-          <p className="ticket-line">{taskCode(task.id)}</p>
+          <p className="ticket-caption">Escanea para ver la tarea</p>
           <p className="ticket-brand">corkbit.</p>
         </article>,
         document.body,

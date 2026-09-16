@@ -16,12 +16,14 @@ test('crear, imprimir, editar, mover, recargar y eliminar', async ({ page, reque
   await page.getByRole('button', { name: 'Nueva tarea', exact: true }).click();
   await page.getByLabel('¿Qué hay que hacer?').fill('Terminar integración MCP');
   await page.getByLabel('Descripción').fill('Preparar versión para pruebas');
+  await page.getByText('Responsable, fecha y más', { exact: true }).click();
   // El responsable sale de la lista de miembros: ya no se teclea un nombre nuevo.
   await page
     .getByRole('combobox', { name: 'Responsable', exact: true })
     .selectOption({ label: 'Persona de prueba' });
   await page.getByLabel('Fecha límite').fill('2026-09-11');
   await page.getByRole('combobox', { name: 'Prioridad', exact: true }).selectOption('HIGH');
+  await page.getByText('Opciones de impresión', { exact: true }).click();
   await page.getByRole('button', { name: 'Guardar + imprimir' }).click();
   await expect(
     page.getByRole('dialog').getByRole('heading', { name: 'Terminar integración MCP' }),
@@ -52,6 +54,7 @@ test('crear, imprimir, editar, mover, recargar y eliminar', async ({ page, reque
     'aria-pressed',
     'true',
   );
+  await page.getByText('Compartir e imprimir', { exact: true }).click();
   await page.getByRole('button', { name: 'Reimprimir', exact: true }).click();
   await expect(page.getByRole('status').filter({ hasText: 'cola de impresión' })).toBeVisible();
   await page.getByRole('button', { name: 'Eliminar tarea', exact: true }).click();
@@ -134,6 +137,7 @@ test('vista móvil desde QR, sin desbordamiento', async ({ page, request }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`/t/${task.id}`);
   await expect(page.getByRole('heading', { name: 'Tarea desde el teléfono' })).toBeVisible();
+  await page.getByText('Compartir e imprimir', { exact: true }).click();
   await expect(
     page.locator('svg').filter({ has: page.locator('title', { hasText: 'Abrir TASK-' }) }),
   ).toBeVisible();
@@ -227,6 +231,7 @@ test('los miembros vienen de Keycloak y no se teclean a mano', async ({ page, re
   await page.getByRole('button', { name: 'Cerrar', exact: true }).click();
   await page.getByRole('button', { name: 'Nueva tarea', exact: true }).click();
   await page.getByLabel('¿Qué hay que hacer?').fill('Tarea asignada');
+  await page.getByText('Responsable, fecha y más', { exact: true }).click();
   await page
     .getByRole('combobox', { name: 'Responsable', exact: true })
     .selectOption({ label: 'Persona de prueba' });
@@ -255,6 +260,7 @@ test('crear tableros, separar tareas y volver desde QR al tablero correcto', asy
   await expect(page.getByRole('heading', { name: 'Tarea del tablero original' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Nueva tarea', exact: true }).click();
   await page.getByLabel('¿Qué hay que hacer?').fill('Tarea del lanzamiento');
+  await page.getByText('Responsable, fecha y más', { exact: true }).click();
   await page.getByRole('combobox', { name: 'Estado', exact: true }).selectOption('WIP');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await page.getByRole('button', { name: 'Cerrar', exact: true }).click();
@@ -281,6 +287,7 @@ test('crear tableros, separar tareas y volver desde QR al tablero correcto', asy
 test('imprimir aquí sella la tarea y deja solo el ticket de 80 mm', async ({ page, request }) => {
   const task = await (await request.post('/api/tasks', { data: { title: 'Ticket local' } })).json();
   await page.goto(`/t/${task.id}`);
+  await page.getByText('Compartir e imprimir', { exact: true }).click();
   await expect(page.getByText('Sin imprimir')).toBeVisible();
   await page.getByRole('button', { name: 'Imprimir aquí' }).click();
   await expect(page.getByText(/^Impresa · /)).toBeVisible();
@@ -334,7 +341,8 @@ test('historial de comentarios: escribir, ver en la tarjeta y borrar', async ({
   expect(task.comment_count).toBe(0);
 
   await page.goto(`/t/${task.id}`);
-  await expect(page.getByText('Sin comentarios todavía.')).toBeVisible();
+  await page.getByText('Comentarios', { exact: true }).click();
+  await expect(page.getByText(/Sin comentarios todavía/)).toBeVisible();
   await page.getByLabel('Nuevo comentario').fill('Hablé con el asesor');
   await page.getByRole('button', { name: 'Comentar', exact: true }).click();
   await expect(page.getByText('Hablé con el asesor')).toBeVisible();
@@ -360,10 +368,39 @@ test('historial de comentarios: escribir, ver en la tarjeta y borrar', async ({
   await expect(page.locator(`[data-task-id="${task.id}"] .comment-mark`)).toHaveText('2');
 
   await page.locator(`[data-task-id="${task.id}"] .note-body`).click();
+  await page.getByText('Comentarios · 2', { exact: true }).click();
   await page.locator('.timeline-list li').first().hover();
   await page
     .getByRole('button', { name: /^Borrar comentario del/ })
     .first()
     .click();
   await expect(page.locator('.timeline-list li p')).toHaveText(['Hablé con el asesor']);
+});
+
+test('nota sencilla: opciones plegadas, edición y papel sin desbordar', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/?board=1');
+  await page.getByRole('button', { name: 'Nueva tarea', exact: true }).click();
+  await expect(page.getByLabel('Responsable', { exact: true })).toBeHidden();
+  await page.getByLabel('¿Qué hay que hacer?').fill('Preparar la entrega del viernes');
+  await page.getByLabel('Descripción').fill('Revisar los últimos cambios con el equipo.');
+  await page.screenshot({ path: 'test-results/note-create-mobile.png', fullPage: true });
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page.getByLabel('Nuevo comentario')).toBeHidden();
+  await expect(page.getByRole('dialog').locator('.task-paper')).toContainText(
+    'Preparar la entrega',
+  );
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+  ).toBeTruthy();
+  await page.screenshot({ path: 'test-results/note-detail-mobile.png', fullPage: true });
+  await page.getByRole('button', { name: 'Editar', exact: true }).click();
+  await expect(page.getByLabel('Descripción')).toHaveValue(
+    'Revisar los últimos cambios con el equipo.',
+  );
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('.ticket-sheet')).not.toContainText('Sin asignar');
+  await expect(page.locator('.ticket-sheet')).not.toContainText('Sin fecha');
+  await page.screenshot({ path: 'test-results/note-ticket.png' });
 });

@@ -963,6 +963,183 @@ textarea {
   padding: 10px 13px;
   font-size: 11px;
 }
+/* La nota se escribe sobre papel; los controles secundarios quedan fuera. */
+.task-paper {
+  background: #f5edb8;
+  border-radius: 2px 2px 18px 2px;
+  padding: 26px;
+  margin-bottom: 22px;
+  box-shadow:
+    0 6px 12px #655d2314,
+    inset 0 12px 0 #ffffff20;
+  color: #30372e;
+}
+.task-paper h2,
+.task-paper .note-title-field textarea {
+  font-size: 26px;
+  line-height: 1.3;
+  letter-spacing: -0.6px;
+  font-weight: 600;
+}
+.task-paper .note-title-field textarea,
+.task-paper .note-description-field textarea {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 0;
+  color: inherit;
+}
+.task-paper .note-title-field textarea {
+  min-height: 88px;
+}
+.task-paper .note-description-field {
+  margin-bottom: 0;
+}
+.task-paper .note-description-field textarea {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.task-paper .detail-description {
+  font-size: 14px;
+  color: inherit;
+}
+.task-paper .detail-facts {
+  margin: 20px 0 0;
+  padding: 16px 0 0;
+  border: 0;
+  border-top: 1px solid #30372e25;
+  gap: 12px 24px;
+}
+.task-paper .detail-facts > span {
+  color: inherit;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.task-paper .detail-facts svg {
+  flex-shrink: 0;
+}
+.task-options {
+  border-bottom: 1px solid var(--border);
+}
+.task-options > summary {
+  cursor: pointer;
+  padding: 16px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.task-options > summary:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+}
+.task-options[open] > summary {
+  margin-bottom: 8px;
+}
+.task-options .ticket-state {
+  margin-bottom: 16px;
+  white-space: normal;
+}
+.task-options .detail-actions {
+  margin-bottom: 16px;
+}
+.dialog:has(.task-paper) .dialog-header {
+  padding: 16px 28px;
+  border-bottom: 0;
+}
+.dialog:has(.task-paper) .dialog-header .eyebrow {
+  display: none;
+}
+.dialog:has(.task-paper) .dialog-header h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.dialog:has(.task-paper) .task-form,
+.dialog:has(.task-paper) .task-detail {
+  padding-top: 4px;
+}
+/* Una hoja sobre el tablero, sin el marco de un formulario. */
+.dialog:has(.task-form) {
+  background: #f8f7f0;
+  border-radius: 4px;
+  border: 0;
+  width: min(490px, calc(100vw - 28px));
+}
+.dialog:has(.task-form) .dialog-header {
+  padding: 14px 20px;
+}
+.dialog:has(.task-form) .dialog-header h2 {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.dialog .task-form {
+  padding: 0 20px 20px;
+}
+.task-form .task-paper {
+  min-height: 330px;
+  padding: 34px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1px 1px 24px 1px;
+  margin-bottom: 12px;
+}
+.task-form .note-title-field > span,
+.task-form .note-description-field > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.task-form .note-title-field textarea {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.25;
+  min-height: 100px;
+  field-sizing: content;
+  resize: none;
+}
+.task-form .note-description-field {
+  flex: 1;
+}
+.task-form .note-description-field textarea {
+  field-sizing: content;
+  resize: none;
+  min-height: 112px;
+  font-size: 16px;
+}
+.task-form .task-paper textarea:focus {
+  outline: none;
+  box-shadow: 0 2px 0 #30372e55;
+}
+.task-form .task-paper textarea::placeholder {
+  color: #555b47;
+  opacity: 0.8;
+}
+.task-form .task-options > summary {
+  padding: 12px 0;
+  font-size: 12px;
+}
+.task-form .task-options button[value='print'] {
+  margin-bottom: 14px;
+}
+.task-form .form-actions {
+  border-top: 0;
+  margin-top: 4px;
+  padding-top: 12px;
+}
+.task-form .form-actions .primary {
+  min-width: 130px;
+}
+@media (max-width: 540px) {
+  .task-paper {
+    padding: 20px;
+  }
+  .task-paper h2,
+  .task-paper .note-title-field textarea {
+    font-size: 23px;
+  }
+}
 .text-button {
   display: inline-flex;
   align-items: center;
@@ -1000,7 +1177,7 @@ textarea {
   gap: 8px;
   margin-bottom: 12px;
 }
-.task-detail > h2 {
+.task-paper h2 {
   font-size: 25px;
   line-height: 1.35;
   font-weight: 600;
@@ -1489,7 +1666,7 @@ textarea {
   .form-grid {
     gap: 10px;
   }
-  .task-detail > h2 {
+  .task-paper h2 {
     font-size: 23px;
   }
   .qr-panel {
@@ -2425,17 +2602,24 @@ textarea::placeholder {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 11pt;
     line-height: 1.35;
-    text-align: center;
+    text-align: left;
   }
   .ticket-sheet h1 {
-    margin: 3mm 0;
-    font-size: 15pt;
-    text-transform: uppercase;
+    margin: 4mm 0;
+    font-size: 18pt;
     overflow-wrap: anywhere;
   }
   .ticket-sheet p {
     margin: 0;
     overflow-wrap: anywhere;
+  }
+  .ticket-sheet .ticket-line,
+  .ticket-sheet .ticket-caption {
+    font-size: 9pt;
+  }
+  .ticket-sheet .ticket-caption,
+  .ticket-sheet .ticket-brand {
+    text-align: center;
   }
   .ticket-sheet .ticket-label {
     margin-top: 3mm;
