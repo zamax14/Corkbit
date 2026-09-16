@@ -1,24 +1,83 @@
-# Corkbit
+<div align="center">
 
-Un Kanban físico-digital: notas en un tablero de corcho que se convierten en tickets térmicos
-de 80 mm, y un servidor MCP para que un agente de IA gestione el tablero con las mismas reglas
-que la web. Software libre bajo [AGPL-3.0](LICENSE).
+<img src="docs/banner.png" alt="Corkbit — Ideas en acción" width="100%">
 
-- Tableros independientes: se cambia de proyecto con pestañas, como en un navegador.
-- «Todos los tableros» muestra cada uno como miniatura de su corcho; desde ahí se eliminan,
-  con una confirmación que dice cuántas tareas se van.
-- Miembros compartidos del espacio: quien tiene cuenta en Keycloak aparece en «Miembros»; se les
-  asignan tareas y un color de post-it que sus notas usan en todos los tableros.
-- Tareas con responsable, descripción, prioridad, fecha y estados Backlog / WIP / Done.
-- Historial de comentarios por tarea: registra lo que avanza aunque la tarea no cambie de columna.
-- Arrastre con ratón, touch y teclado; controles de estado en la vista individual.
-- Guardar, editar, eliminar, imprimir y reimprimir; persistencia real en SQLite o PostgreSQL.
-- Dos formas de imprimir: el diálogo del navegador con tu propia impresora, o la cola ESC/POS.
-- Cada tarea muestra si ya tiene ticket en papel; el sello nunca impide reimprimir.
-- Cola transaccional, agente local ESC/POS para LAN/USB, heartbeat y reintentos limitados.
-- QR con ruta `/t/{id}`, vista móvil, usuarios y límite WIP informativo.
-- Interfaz en español, sin servicios externos ni fuentes remotas.
-- Autenticación con Keycloak: sesión obligatoria, sin autorregistro y sin modo «sin auth».
+<br>
+
+**Un Kanban físico-digital: notas en un tablero de corcho que salen por la impresora térmica,
+y un servidor MCP para que un agente de IA trabaje en el mismo tablero que tú.**
+
+[![Licencia AGPL v3](https://img.shields.io/badge/licencia-AGPL--3.0-1f2933?style=flat-square)](LICENSE)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-1f2933?style=flat-square&logo=python&logoColor=white)](apps/api/pyproject.toml)
+[![Node 22+](https://img.shields.io/badge/node-22+-1f2933?style=flat-square&logo=nodedotjs&logoColor=white)](apps/web/package.json)
+[![MCP](https://img.shields.io/badge/MCP-servidor_integrado-b99a6b?style=flat-square)](#agentes-de-ia-mcp)
+[![ESC/POS](https://img.shields.io/badge/ESC%2FPOS-80_mm-b99a6b?style=flat-square)](docs/printer-protocol.md)
+
+[Inicio rápido](#inicio-rápido-con-docker) · [Agentes de IA](#agentes-de-ia-mcp) ·
+[Desplegar](#desplegar) · [Arquitectura](docs/architecture.md) · [Pruebas](docs/testing.md)
+
+</div>
+
+---
+
+## Qué es
+
+Escribes una tarea en el tablero y sale por la impresora térmica como un post-it de 80 mm con su
+QR. Lo pegas en un corcho de verdad. Cuando alguien escanea el QR, vuelve a la tarea. El corcho es
+el tablero; la pantalla es su espejo.
+
+Y como la API entera se publica también como servidor **MCP**, un agente de IA mueve tareas, deja
+comentarios e imprime tickets con las mismas validaciones y las mismas transacciones que la web.
+No hay una lógica paralela para la IA: son las mismas rutas.
+
+### El tablero
+
+| | |
+|---|---|
+| **Tableros por proyecto** | Pestañas como las de un navegador, y una galería donde cada tablero es la miniatura de su propio corcho. |
+| **Tareas** | Responsable, descripción, prioridad, fecha y estados Backlog / WIP / Done. |
+| **Comentarios** | Un historial por tarea, para registrar lo que avanza aunque no cambie de columna. |
+| **Arrastre accesible** | Ratón, touch y teclado, con anuncios en español. En móvil, botones de estado. |
+| **Miembros** | Quien tiene cuenta en Keycloak aparece en «Miembros», con un color de post-it propio. |
+| **Límite WIP** | Aviso visual configurable. Nunca bloquea una transición. |
+
+### El papel
+
+| | |
+|---|---|
+| **«Imprimir aquí»** | El diálogo del navegador, con la impresora de tu equipo. Sin agente ni puertos. |
+| **Cola ESC/POS** | Un agente local imprime con comandos nativos: corte automático y QR nativo. |
+| **Transaccional** | Guardar + imprimir es una sola transacción; cada ticket guarda su instantánea. |
+| **Reintentos** | Reserva atómica, heartbeat, acuses persistentes y recuperación tras caída. |
+
+### La casa
+
+| | |
+|---|---|
+| **Autenticación** | Keycloak/OIDC obligatorio. Sin autorregistro y sin modo «sin auth». |
+| **Persistencia** | SQLite en local, PostgreSQL en Docker. Alembic como única vía de esquema. |
+| **Sin nada externo** | Interfaz en español, fuentes locales, ningún servicio de terceros. |
+
+## Cómo se ve
+
+<div align="center">
+
+<img src="docs/screenshots/tablero.png" alt="El tablero de Corkbit: tres columnas de corcho con post-its" width="100%">
+
+<br><br>
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/movil.png" alt="Detalle de una tarea en móvil"></td>
+<td width="50%"><img src="docs/screenshots/tableros-movil.png" alt="Galería de tableros en móvil"></td>
+</tr>
+<tr>
+<td align="center"><em>Detalle de tarea tras escanear su QR</em></td>
+<td align="center"><em>Galería de tableros</em></td>
+</tr>
+</table>
+
+</div>
 
 ## Agentes de IA (MCP)
 
